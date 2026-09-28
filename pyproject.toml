@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clm-bench"
+version = "0.1.0"
+description = "Independent calibration, distractor-sensitivity and latency benchmarks for CLM-8B (Contrastive Language Models)"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Suneel Marthi" }]
+dependencies = [
+    "numpy>=1.24",
+    "torch>=2.4",            # MPS bf16 support on Apple Silicon
+    "transformers>=4.56",    # Qwen3 + `dtype=` kwarg
+    "accelerate>=0.30",
+    "datasets>=2.19",
+    "huggingface_hub>=0.23",
+    "requests>=2.28",
+    "matplotlib>=3.7",
+    "pytest>=7",
+    # contrastive-lm is installed separately with --no-deps (see setup.sh):
+    # its declared deps pull in vLLM, which has no macOS wheels.
+]
+
+[project.scripts]
+clm-bench = "clm_bench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
