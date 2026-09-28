@@ -1,0 +1,170 @@
+{
+  "machine": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "python": "3.11.14",
+    "torch": "2.14.0",
+    "transformers": "5.17.0",
+    "chip": "Apple M3 Max",
+    "memory_gb": 128
+  },
+  "encoder": {
+    "backend": "hf",
+    "model": "Qwen/Qwen3-8B",
+    "device": "mps",
+    "dtype": "bfloat16",
+    "batch_size": 16,
+    "load_seconds": 7.5
+  },
+  "heads": {
+    "checkpoint": "/Users/suneel.marti/.cache/clm/CLM_v0.1-8B.pt",
+    "logit_scale": 100.0,
+    "head_params": 18887680,
+    "cfg": {
+      "model": "Qwen/Qwen3-8B",
+      "hidden_size": 4096,
+      "projection_dim": 512,
+      "width": 1536,
+      "depth": 3,
+      "activation": "gelu",
+      "layernorm": true,
+      "residual": false
+    }
+  },
+  "args": {
+    "cmd": "latency",
+    "backend": "hf",
+    "model": null,
+    "device": null,
+    "dtype": "bfloat16",
+    "batch_size": 16,
+    "vllm_url": null,
+    "checkpoint": null,
+    "random_heads": false,
+    "out": "results",
+    "seed": 13,
+    "ks": [
+      4,
+      16,
+      77,
+      256,
+      1024
+    ],
+    "pool": "banking77",
+    "n_states": 64,
+    "n_cached": 30,
+    "n_uncached": 8,
+    "warmup": 3,
+    "max_seconds_per_cell": 180.0,
+    "fn": "cmd_latency"
+  },
+  "pool": "banking77",
+  "rows": [
+    {
+      "k": 4,
+      "cached": {
+        "n": 30,
+        "p50_ms": 81.16489600070054,
+        "p95_ms": 102.3796776025847,
+        "mean_ms": 81.99587796698324,
+        "encode_p50_ms": 80.314916507632,
+        "head_and_score_p50_ms": 0.8703545026946813,
+        "action_cache_build_ms": 119.6001670032274
+      },
+      "uncached": {
+        "n": 8,
+        "p50_ms": 197.38612449873472,
+        "p95_ms": 292.82746644821594,
+        "mean_ms": 207.35919774779177,
+        "encode_p50_ms": 195.96302050194936,
+        "head_and_score_p50_ms": 1.4093335048528388
+      },
+      "speedup_p50": 2.4319149561533484
+    },
+    {
+      "k": 16,
+      "cached": {
+        "n": 30,
+        "p50_ms": 80.81456249783514,
+        "p95_ms": 83.14574154428556,
+        "mean_ms": 79.88989589988098,
+        "encode_p50_ms": 79.97485400846926,
+        "head_and_score_p50_ms": 0.8577289991080761,
+        "action_cache_build_ms": 503.30654199933633
+      },
+      "uncached": {
+        "n": 8,
+        "p50_ms": 544.4861249998212,
+        "p95_ms": 852.8286188455238,
+        "mean_ms": 602.1940312475635,
+        "encode_p50_ms": 543.0300415027887,
+        "head_and_score_p50_ms": 1.4699169987579808
+      },
+      "speedup_p50": 6.737475377836845
+    },
+    {
+      "k": 77,
+      "cached": {
+        "n": 30,
+        "p50_ms": 82.3292080021929,
+        "p95_ms": 95.26829620590432,
+        "mean_ms": 83.86404720222345,
+        "encode_p50_ms": 81.33995800017146,
+        "head_and_score_p50_ms": 0.9892500020214356,
+        "action_cache_build_ms": 2278.4492499922635
+      },
+      "uncached": {
+        "n": 8,
+        "p50_ms": 2306.490707997,
+        "p95_ms": 2513.6787813491537,
+        "mean_ms": 2343.4515261233173,
+        "encode_p50_ms": 2304.642437506118,
+        "head_and_score_p50_ms": 1.7592704971320927
+      },
+      "speedup_p50": 28.015460903444676
+    },
+    {
+      "k": 256,
+      "cached": {
+        "n": 30,
+        "p50_ms": 81.80775000801077,
+        "p95_ms": 86.79732904784032,
+        "mean_ms": 81.58291946601821,
+        "encode_p50_ms": 80.90466650901362,
+        "head_and_score_p50_ms": 0.9076670030481182,
+        "action_cache_build_ms": 8353.90849999385
+      },
+      "uncached": {
+        "n": 8,
+        "p50_ms": 8368.765166502271,
+        "p95_ms": 8622.035924805095,
+        "mean_ms": 8407.778723878437,
+        "encode_p50_ms": 8366.287833501701,
+        "head_and_score_p50_ms": 2.3610625066794455
+      },
+      "speedup_p50": 102.29795056926497
+    },
+    {
+      "k": 1024,
+      "cached": {
+        "n": 30,
+        "p50_ms": 85.02839600259904,
+        "p95_ms": 91.18059549291502,
+        "mean_ms": 83.56699306653657,
+        "encode_p50_ms": 84.08168750611367,
+        "head_and_score_p50_ms": 0.9023539969348349,
+        "action_cache_build_ms": 39588.245541002834
+      },
+      "uncached": {
+        "n": 5,
+        "p50_ms": 40200.602083001286,
+        "p95_ms": 46508.963083004346,
+        "mean_ms": 41803.880683201714,
+        "encode_p50_ms": 40196.22670800891,
+        "head_and_score_p50_ms": 4.375374992378056
+      },
+      "speedup_p50": 472.7903144470994
+    }
+  ],
+  "n_states": 64
+}

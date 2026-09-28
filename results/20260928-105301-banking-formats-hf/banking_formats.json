@@ -1,0 +1,85 @@
+{
+  "machine": {
+    "platform": "macOS-26.5.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "python": "3.11.14",
+    "torch": "2.14.0",
+    "transformers": "5.17.0",
+    "chip": "Apple M3 Max",
+    "memory_gb": 128
+  },
+  "rows": [
+    {
+      "state_format": "suffix",
+      "label_style": "plain",
+      "n": 500,
+      "accuracy": 0.024,
+      "top5": 0.166,
+      "median_gold_rank": 23.5,
+      "distinct_predictions": 18,
+      "most_common_prediction_share": 0.758,
+      "mean_state_cosine_projected": 0.887142539024353,
+      "centered_accuracy_diagnostic": 0.18
+    },
+    {
+      "state_format": "suffix",
+      "label_style": "sentence",
+      "n": 500,
+      "accuracy": 0.084,
+      "top5": 0.266,
+      "median_gold_rank": 19.0,
+      "distinct_predictions": 19,
+      "most_common_prediction_share": 0.428,
+      "mean_state_cosine_projected": 0.887142539024353,
+      "centered_accuracy_diagnostic": 0.26
+    },
+    {
+      "state_format": "none",
+      "label_style": "plain",
+      "n": 500,
+      "accuracy": 0.138,
+      "top5": 0.36,
+      "median_gold_rank": 10.0,
+      "distinct_predictions": 34,
+      "most_common_prediction_share": 0.216,
+      "mean_state_cosine_projected": 0.689936101436615,
+      "centered_accuracy_diagnostic": 0.25
+    },
+    {
+      "state_format": "none",
+      "label_style": "sentence",
+      "n": 500,
+      "accuracy": 0.192,
+      "top5": 0.438,
+      "median_gold_rank": 8.0,
+      "distinct_predictions": 45,
+      "most_common_prediction_share": 0.134,
+      "mean_state_cosine_projected": 0.689936101436615,
+      "centered_accuracy_diagnostic": 0.282
+    },
+    {
+      "state_format": "prefix",
+      "label_style": "plain",
+      "n": 500,
+      "accuracy": 0.122,
+      "top5": 0.324,
+      "median_gold_rank": 12.0,
+      "distinct_predictions": 33,
+      "most_common_prediction_share": 0.262,
+      "mean_state_cosine_projected": 0.736175537109375,
+      "centered_accuracy_diagnostic": 0.226
+    },
+    {
+      "state_format": "prefix",
+      "label_style": "sentence",
+      "n": 500,
+      "accuracy": 0.16,
+      "top5": 0.394,
+      "median_gold_rank": 10.0,
+      "distinct_predictions": 39,
+      "most_common_prediction_share": 0.384,
+      "mean_state_cosine_projected": 0.736175537109375,
+      "centered_accuracy_diagnostic": 0.28
+    }
+  ]
+}
