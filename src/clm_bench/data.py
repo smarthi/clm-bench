@@ -134,7 +134,10 @@ def synthetic_pool(size: int = 2000, seed: int = 1) -> list[str]:
 LOADERS = {"arc": load_arc, "banking77": load_banking77, "synthetic": load_synthetic}
 
 
-def load(name: str, n: int | None, seed: int) -> list[Item]:
+def load(name: str, n: int | None, seed: int, banking_format: str = "suffix",
+         banking_labels: str = "plain") -> list[Item]:
     if name not in LOADERS:
         raise ValueError(f"unknown dataset {name!r}; choose from {sorted(LOADERS)}")
+    if name == "banking77":
+        return load_banking77(n, seed, banking_format, banking_labels)
     return LOADERS[name](n, seed)

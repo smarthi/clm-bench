@@ -1,5 +1,9 @@
 .venv/
-results/
 __pycache__/
 *.egg-info/
 .pytest_cache/
+.idea/
+.DS_Store
+
+# Keep run outputs (.md/.json/.png); drop the embedding cache.
+results/.emb_cache/

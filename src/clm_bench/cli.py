@@ -142,7 +142,7 @@ def cmd_calibration(args) -> None:
     t0 = time.time()
     for name in args.datasets:
         print(f"[data] loading {name}", flush=True)
-        items = load(name, args.n, args.seed)
+        items = load(name, args.n, args.seed, args.banking_format, args.banking_labels)
         use_distractors = not args.no_distractors and max(len(i.candidates) for i in items) <= 10
         res, curves = C.run_dataset(name, items, emb, scorer, cache, args.splits, args.seed,
                                     use_distractors, args.bins)
@@ -165,7 +165,12 @@ def calibration_markdown(r: dict) -> str:
          f"(logit scale {r['heads']['logit_scale']}, {r['heads']['head_params']:,} params)  ",
          f"Machine: `{r['machine']}`", ""]
     for name, d in r["datasets"].items():
-        L += [f"## {name}  (n={d['n']}, K={d['k']['min']}–{d['k']['max']})", "",
+        L += [f"## {name}  (n={d['n']}, K={d['k']['min']}–{d['k']['max']})", ""]
+        if name == "banking77":
+            a = r.get("args", {})
+            L += [f"Input layout: state `{a.get('banking_format', 'suffix')}`, "
+                  f"labels `{a.get('banking_labels', 'plain')}`.", ""]
+        L += [
               "At the checkpoint's own temperature (T=1), full set:", "",
               "| Scorer | Accuracy | Chance | Mean conf. | ECE | MCE | NLL | Brier |",
               "|---|---|---|---|---|---|---|---|"]
@@ -334,6 +339,12 @@ def main(argv: list[str] | None = None) -> None:
     c.add_argument("--splits", type=int, default=5, help="random calibration/test splits for temperature scaling")
     c.add_argument("--bins", type=int, default=15)
     c.add_argument("--no-distractors", action="store_true")
+    c.add_argument("--banking-format", choices=["suffix", "none", "prefix"], default="suffix",
+                   help="BANKING77 state layout: suffix = message then question (CLM's documented default); "
+                        "none = message only; prefix = question first")
+    c.add_argument("--banking-labels", choices=["plain", "sentence"], default="plain",
+                   help="BANKING77 candidate wording: plain = 'card arrival'; "
+                        "sentence = 'The customer is asking about card arrival.'")
     c.set_defaults(fn=cmd_calibration)
 
     l = sub.add_parser("latency", help="cached vs uncached decision latency vs K")

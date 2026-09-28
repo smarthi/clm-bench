@@ -8,13 +8,17 @@ This repo benchmarks CLM-8B's calibration, distractor sensitivity and cached/unc
 2. `pytest -q`. All tests must pass before touching the model.
 3. `clm-bench sanity`. CLM **must** rank "William Shakespeare" and "Charges, invoices, refunds" first. If it doesn't, the embeddings don't match what the heads were trained on. Stop and report; don't tune around it.
 4. `clm-bench calibration`
-5. `clm-bench latency`
-6. Report by pasting the generated `calibration.md` and `latency.md` and attaching the PNGs from the run's `results/` subfolder.
+5. `clm-bench banking-formats`
+6. `clm-bench latency`
+7. Report by pasting the generated `calibration.md`, `banking_formats.md` and `latency.md` and attaching the PNGs from each run's `results/` subfolder.
+
+To reproduce the article's numbers, follow the "Reproducing the article" table in `README.md`.
 
 ## Rules
 
 - **Don't change metric definitions** in `src/clm_bench/metrics.py` (ECE = 15 equal-width bins on top-1 confidence; Brier = multi-class sum of squares). If you think one is wrong, say so and ask first.
-- **Don't change how texts are formatted** (`clm.schema.state_text`, plain candidate text). That formatting matches CLM's training layout.
+- **Don't change the default text formatting** (`clm.schema.state_text`, plain candidate text). The default matches CLM's documented layout. Compare other layouts through `--banking-format` / `--banking-labels` or `banking-formats`, never by editing the defaults.
+- **Don't commit `results/.emb_cache/`.** It holds tens of MB of embeddings. Results `.md`, `.json` and `.png` files are fine to commit.
 - **Don't modify the installed `contrastive-lm` package.** It's installed with `--no-deps` on purpose: its vLLM dependency has no macOS wheels.
 - **Keep the encoder faithful**: Qwen3-8B, last-token pooling, left padding, L2 normalisation, max 2048 tokens.
 - **Don't push, publish or upload results anywhere.** Everything stays local.
@@ -38,6 +42,6 @@ src/clm_bench/data.py         ARC-Challenge, BANKING77, synthetic -> Item(state,
 src/clm_bench/metrics.py      ECE, MCE, NLL, Brier, temperature fit
 src/clm_bench/calibration.py  calibration + temperature scaling + distractor study
 src/clm_bench/latency.py      cached vs uncached timing
-src/clm_bench/cli.py          clm-bench sanity | calibration | latency | parity
+src/clm_bench/cli.py          clm-bench sanity | calibration | banking-formats | latency | parity
 tests/                        metric unit tests
 ```

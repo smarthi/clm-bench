@@ -22,8 +22,23 @@ pytest -q                       # metric unit tests, no model needed
 
 clm-bench sanity                # ~2 min incl. model load; must rank Shakespeare first
 clm-bench calibration           # ARC-Challenge + BANKING77, 500 items each
+clm-bench banking-formats       # BANKING77 input-layout ablation, ~1 min
 clm-bench latency               # K = 4, 16, 77, 256, 1024
 ```
+
+## Reproducing the article
+
+The numbers in "Jev vs. CLM: Two Ways to Build a Model That Decides Instead of Writes" come from these runs on an Apple M3 Max (128 GB). The outputs are committed under `results/`.
+
+| Claim | Command | Result folder |
+|---|---|---|
+| ARC overconfidence (ECE 0.32 → 0.07 at T ≈ 4.4); distractor sensitivity | `clm-bench calibration` | `20260928-104233-calibration-hf` |
+| BANKING77 collapses under CLM's default layout (2.4%) | `clm-bench calibration` (same run) | `20260928-104233-calibration-hf` |
+| Input layout swings BANKING77 accuracy 8× | `clm-bench banking-formats` | `20260928-105301-banking-formats-hf` |
+| BANKING77 calibration with the best layout (19.2%, ECE 0.07, T ≈ 1.3) | `clm-bench calibration --datasets banking77 --banking-format none --banking-labels sentence` | the `calibration-hf` run with that layout |
+| Cached 81–85 ms flat vs. uncached 197 ms → 40 s | `clm-bench latency` | `20260928-105444-latency-hf` |
+
+Accuracy and calibration numbers should reproduce closely on any machine. Latency is specific to the machine it runs on.
 
 Each run writes to `results/<timestamp>-<kind>-<backend>/`:
 
@@ -50,6 +65,19 @@ The run reports:
 - Accuracy, chance accuracy, mean confidence, **ECE** (15 equal-width bins), MCE, NLL and multi-class Brier, all at the checkpoint's own temperature. The same metrics are reported for a **no-heads ablation** (raw Qwen3-8B cosine), which shows what the heads add.
 - **Temperature scaling**: T is fit by NLL on a random half and scored on the other half, over 5 random splits (mean ± sd).
 - **Distractor sensitivity** (datasets with ≤ 10 options): the run adds "None of the above.", "I don't know." and a correct answer taken from a *different* question. It reports the shift in P(gold) and P(top-1), threshold crossings at 0.5 and 0.9, and how often a distractor becomes top-1. It also includes an IIA check that should print about 1e-16, which confirms the ratios among original options are untouched.
+
+### BANKING77 input-format ablation (`clm-bench banking-formats`)
+
+This scores the same 500 BANKING77 messages under three state layouts and two label wordings:
+
+- **`suffix`**: the message, a blank line, then the question. This is CLM's documented `Choice` layout and the calibration default.
+- **`none`**: the message only.
+- **`prefix`**: the question first, then the message.
+- **Label wordings**: `plain` ("card arrival") or `sentence` ("The customer is asking about card arrival.").
+
+For each combination it reports accuracy, top-5 accuracy, median gold rank, how many distinct predictions were made, the share taken by the most common prediction, and the mean cosine between projected state embeddings. The last one is the collapse signal. A centred-embedding accuracy is included as a diagnostic only; it isn't CLM as shipped.
+
+Use `--banking-format` and `--banking-labels` on `clm-bench calibration` to get full calibration metrics for any one layout.
 
 ### Latency (`clm-bench latency`)
 
@@ -78,5 +106,5 @@ The report gives p50/p95 per cell, the speedup, and the cached path's split betw
 
 - These results cover the **reference checkpoint zero-shot**, not the fine-tuned verifier heads behind the DeepSWE and Terminal-Bench numbers.
 - Temperature scaling fixes the average miscalibration. It does not fix set dependence: absolute probabilities still move when the candidate set changes.
-- BANKING77 is scored against label names ("card arrival"). A richer description per intent would likely raise accuracy, so treat that number as a floor.
+- BANKING77 is scored against intent names, not curated descriptions. Accuracy depends heavily on input layout (see `banking-formats`), so always state which layout a number came from.
 - The HF-transformers path runs in bf16 on MPS. On a CUDA box, `clm-bench parity` confirms it matches vLLM (expected cosine > 0.99).
